@@ -1,7 +1,13 @@
-Write your reflection here.
-
-See reflection.md for what makes a good reflection — be specific, use the
-terminology from this assignment (grain, long vs. wide, vectorized .str methods,
-coerce, NaT, pd.to_datetime format, .dt, concat, ignore_index, group by, named
-aggregation, reset_index, pivot_table, fill_value, melt, lineage), and make it
-actionable.
+In Assignment 05, we built a data pipeline for Salt City Coffee to process weekly payroll exports.
+Functions like `add_clean_columns` follow the lineage rule by copying and adding columns without modifying raw inputs like `" e004"`, 
+whereas `summarize_employees` changes the table grain to one row per person. 
+`hours_grid` uses `pivot_table` with `fill_value=0` to turn the long history wide, 
+creating a 0 cell for every week someone wasn’t paid, 
+and `missed_weeks` uses `melt` to turn the grid long again so those absences become rows with `hours_worked == 0`.
+We used two passes of `pd.to_datetime` with explicit formats because a single format cannot read both date styles, 
+and omitting `format=` forces pandas to guess ambiguous dates like `03/04/2026`; with `errors="coerce"`, anything neither format can read becomes `NaT`. 
+Named aggregation in `summarize_employees` uses lambdas like `(hours > 40.0).sum()` to count overtime weeks, followed by `.reset_index()` to restore group keys as columns.
+Running `pytest` before saving `history.py` produced `NoneType` errors because tests imported old stubs,
+and a trailing comma after `.str.strip()` in `clean_number` accidentally turned the Series into a tuple. 
+Preserving docstrings was essential since removing them would have failed the style check. 
+Moving forward, I will save files before running tests and execute `ruff check` prior to every commit to catch formatting issues early.

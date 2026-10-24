@@ -63,6 +63,7 @@ def add_roster(history: pd.DataFrame, employees: pd.DataFrame) -> pd.DataFrame:
     roster = roster[["employee_id", "display_name", "department"]]
     return history.merge(roster, on="employee_id", how="left")
 
+
 def build_history(exports: list, employees: pd.DataFrame) -> pd.DataFrame:
     """Raw exports and roster in; the finished quarter history out.
 
